@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Set DST_DIR to the destination directory
+# Basename must be $1
 readonly DST_DIR=""
 
 function usage() {
@@ -47,21 +49,20 @@ readonly filename_without_ext=${filename_with_ext%.*}
 readonly ext=${filename_with_ext##*.}
 
 mkdir $DST_DIR
-if [[ $? -eq 0 ]]; then
-    for i in $(eval echo {$2..$3}); do
-        url=$(dirname $4)/$i.$ext
-        cecho b "Currently working on No.${i}: ${url}\n"
-        curl $url --output $i.$ext
-        mv $i.$ext $DST_DIR
-    done
-else
+if [[ $? -ne 0 ]]; then
     cecho r "Failed to create directory: ${DST_DIR}" >&2
     exit 1
 fi
 
-if [[ $? -eq 0 ]]; then
-    cecho g "Download completed!"
-else
-    cecho r "Download (partly) failed!" >&2
-    exit 1
-fi
+for i in $(eval echo {$2..$3}); do
+    url=$(dirname $4)/$i.$ext
+    cecho b "Currently working on No.${i}: ${url}\n"
+    curl $url -f -o $i.$ext
+    if [[ $? -ne 0 ]]; then
+        cecho r "Failed to download: ${url}" >&2
+        exit 1
+    fi
+    mv $i.$ext $DST_DIR
+done
+
+cecho g "Download completed!"
