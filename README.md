@@ -2,9 +2,9 @@
 
 ## Usage
 
-Set DST_DIR in advance.
+Set DST_DIR.
 
 ```sh
 chmod +x dl.sh
-./dl.sh dst_dir 001 032 http://example.com/images/001.jpg
+./dl.sh <dir_name> <start_num> <end_num> <file_URL>
 ```
