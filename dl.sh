@@ -48,7 +48,7 @@ fi
 readonly filename_without_ext=${filename_with_ext%.*}
 readonly ext=${filename_with_ext##*.}
 
-mkdir $DST_DIR
+mkdir "$DST_DIR"
 if [[ $? -ne 0 ]]; then
     cecho r "Failed to create directory: ${DST_DIR}" >&2
     exit 1
@@ -62,7 +62,7 @@ for i in $(eval echo {$2..$3}); do
         cecho r "Failed to download: ${url}" >&2
         exit 1
     fi
-    mv $i.$ext $DST_DIR
+    mv $i.$ext "$DST_DIR"
 done
 
 cecho g "Download completed!"
