@@ -62,7 +62,9 @@ if [[ $? -ne 0 ]]; then
 fi
 
 for i in $(eval echo {$2..$3}); do
-    url=$(dirname $4)/$i.$ext
+    # Change file_name if necessary
+    file_name="${i}.$ext"
+    url="$(dirname $4)/$file_name"
     cecho b "Currently working on No.${i}: ${url}\n"
     curl $url -f -o "$1"/$i.$ext
     if [[ $? -ne 0 ]]; then
