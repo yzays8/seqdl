@@ -2,6 +2,7 @@
 
 # Set DST_DIR to the destination directory
 # Basename must be $1
+# Example: readonly DST_DIR="/path/to/destination/directory/"$1""
 readonly DST_DIR=""
 
 function usage() {
@@ -50,19 +51,31 @@ readonly ext=${filename_with_ext##*.}
 
 mkdir "$DST_DIR"
 if [[ $? -ne 0 ]]; then
-    cecho r "Failed to create directory: ${DST_DIR}" >&2
+    cecho r "Failed to create destination directory: ${DST_DIR}" >&2
+    exit 1
+fi
+
+mkdir "$1"
+if [[ $? -ne 0 ]]; then
+    cecho r "Failed to create temp directory: $1" >&2
     exit 1
 fi
 
 for i in $(eval echo {$2..$3}); do
     url=$(dirname $4)/$i.$ext
     cecho b "Currently working on No.${i}: ${url}\n"
-    curl $url -f -o $i.$ext
+    curl $url -f -o "$1"/$i.$ext
     if [[ $? -ne 0 ]]; then
         cecho r "Failed to download: ${url}" >&2
         exit 1
     fi
-    mv $i.$ext "$DST_DIR"
 done
+
+mv "$1"/*.$ext "$DST_DIR"
+rmdir "$1"
+if [[ $? -ne 0 ]]; then
+    cecho r "Failed to remove temp directory: $1" >&2
+    exit 1
+fi
 
 cecho g "Download completed!"
